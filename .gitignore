@@ -5,8 +5,6 @@ lc0.config
 <<<<<<< HEAD
 *.xml
 bench*
-=======
 *.xml
->>>>>>> 4d8f0853dce97b5000a8b25ab0ce24da75373572
 *.o
 *.out
