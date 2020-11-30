@@ -677,14 +677,14 @@ bool annotateMove(const string &playedMove) {
 
         cout << playedMove << "";
         cout << "{";
-        // if (ev->isForcedMate()) {
-            // cout << "[%eval #" << ev->getNumMateMoves() << "]";
-        // } else {
+        if (ev->isForcedMate()) {
+            cout << "[%eval #" << ev->getNumMateMoves() << "]";
+        } else {
             float ev_d = ev->getValue() * 1.0 / 100;
             cout << "[%eval ";
             cout << std::fixed;
             cout << setprecision(2) << ev_d << "]";
-        // }
+        }
         cout << "}";
 
         // Print out the better alternative moves and their evaluations.
@@ -694,7 +694,6 @@ bool annotateMove(const string &playedMove) {
         //     ev = *it;
         //     if (ev->getFirstMove() != playedMove) {
         //         cout << "(" << ev->getFirstMove() << "{";
-<<<<<<< HEAD
         //         // if (ev->isForcedMate()) {
         //         //     cout << "[%eval #" << ev->getNumMateMoves() << "]";
         //         // } else {
@@ -704,28 +703,14 @@ bool annotateMove(const string &playedMove) {
         //             cout << setprecision(2) << ev_d << "]";
         //         // }
         //             cout << "})";
-=======
-        //     if (ev->isForcedMate()) {
-        //         cout << "[%eval #" << ev->getNumMateMoves() << "]";
-        //     } else {
-        //         double ev_d = ev->getValue() * 1.0 / 100;
-        //         cout << "[%eval " << ev_d << "]";
-        //     }
-        //         cout << "})";
->>>>>>> 4d8f0853dce97b5000a8b25ab0ce24da75373572
         //     }
         //     it++;
         // } while (it != evaluations.end() && !worse_move(*it, best));
         cout << endl;
         return true;
     // } else {
-<<<<<<< HEAD
     //     cout << endl;
     //     return false;
-=======
-        // cout << endl;
-        // return false;
->>>>>>> 4d8f0853dce97b5000a8b25ab0ce24da75373572
     // }
 }
 

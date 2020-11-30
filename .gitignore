@@ -8,3 +8,5 @@ bench*
 *.xml
 *.o
 *.out
+*data
+km*

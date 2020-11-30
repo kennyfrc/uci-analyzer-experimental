@@ -111,7 +111,7 @@ bool Engine::initEngine(int searchDepth,
         // setOption("MultiPV", variations);
 
         // Set command-line options.
-        // setOptions(options);
+        setOptions(options);
 
         
         // ASSERT_IS(checkIsReady() == true, "???");
