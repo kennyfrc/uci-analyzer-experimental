@@ -73,7 +73,7 @@ static vector<Evaluation *> evaluations;
 
 // Defaults that are settable by arguments.
 static int defaultBookDepth = 0;
-static unsigned numVariations = 1;
+static unsigned numVariations = 5;
 static int searchDepth = 20;
 // Default analysis engine.
 static string engineName = "stockfish";
@@ -239,7 +239,7 @@ bool runEngine(vector<string> files) {
     bool ok = true;
     try {
         engine = new Engine(engineName);
-        if (engine->initEngine(searchDepth, engineOptions)) {
+        if (engine->initEngine(numVariations, searchDepth, engineOptions)) {
             if (XMLformat) {
                 cout << "<gamelist>" << endl;
             }
@@ -441,7 +441,7 @@ bool readGame(istream &movestream, vector<string> &movelist,
 void sendGame(vector<string> &movelist, const string& fenstring, int bookDepth) {
 
     // printf("movelist: %s\n", movelist[0].c_str());
-    // printf("fenstring: %s\n", fenstring.c_str());
+    // std::cout << "fenstring: " << fenstring << std::endl;
 
     // Don't include the result.
     int numMoves = movelist.size() - 1;
@@ -531,6 +531,8 @@ void sendGame(vector<string> &movelist, const string& fenstring, int bookDepth) 
                     engine->searchMoves(playedMove);
                     // Add it to the current ones.
                     obtainEvaluations();
+                    // std::cout << "played move: " << playedMove << std::endl;
+                    assert(haveEvaluationForMove(playedMove) == true);
                 }
 
                 bool playedMoveEvaluated;
@@ -579,26 +581,33 @@ void sendGame(vector<string> &movelist, const string& fenstring, int bookDepth) 
  * by the engine.
  */
 void extractInfo(string &info, vector<string> infoTokens, int searchDepth) {
-    ASSERT_IS("info", infoTokens[0]);
+    assert("info" == infoTokens[0]);
+    // assert("depth" == infoTokens[1]);
+
+    // std::cout << "infoTokens[0]: " << infoTokens[0] << std::endl;
+    // std::cout << "infoTokens[1]: " << infoTokens[1] << std::endl;
     // for(int i = 0; i < infoTokens.size(); i++) {
     //     printf("token[%d]: %s", i, infoTokens[i].c_str());
     // }
-    // ASSERT_IS("depth", infoTokens[1]);
-    // ASSERT_IS("score", infoTokens[6]);
-    // if ((info.find("multipv ") != string::npos) || (info.find("nodes ") != string::npos)) {
+    
+
+    // if (info.find("multipv ") != string::npos) {
     // if((info.find("cp ") != string::npos) ) {
-        int numTokens = infoTokens.size();
-        int t = 1;
-        while (t < numTokens && infoTokens[t] != "depth") {
-            t++;
-        }
-        if (t < numTokens) {
-            int depth = strToInt(infoTokens[t + 1]);
-            if (depth == searchDepth) {
-                Evaluation *ev = new Evaluation(infoTokens, info);
-                saveEvaluation(ev, info);
-            }
-        }
+    int numTokens = infoTokens.size();
+    int t = 1;
+    while (t < numTokens && infoTokens[t] != "depth") {
+        t++;
+    }
+    // assert_eq(7, numTokens);
+    if (t < numTokens) {
+        int depth = strToInt(infoTokens[t + 1]);
+        // assert_eq(8, depth);
+        if (depth == searchDepth) {
+            // assert_neq(8, depth);
+            Evaluation *ev = new Evaluation(infoTokens, info);
+            saveEvaluation(ev, info);
+        } 
+    }
     // }
 }
 
@@ -669,10 +678,14 @@ bool showEvaluationsForMove(const string &playedMove, bool white) {
  */
 bool annotateMove(const string &playedMove) {
     vector<Evaluation *>::iterator it = evaluations.begin();
-    // while (it != evaluations.end() && (*it)->getFirstMove() != playedMove) {
-    //     it++;
-    // }
-    // if (it != evaluations.end()) {
+
+    while (it != evaluations.end() && (*it)->getFirstMove() != playedMove) {
+        // std::cout << "playedMove: " << playedMove << std::endl;
+        // std::cout << "firstMove: " << (*it)->getFirstMove() << std::endl;
+        // std::cout << "depth: " << (*it)->getDepth() << std::endl;
+        it++;
+    }
+    if (it != evaluations.end()) {
         const Evaluation *ev = *it;
 
         cout << playedMove << "";
@@ -688,30 +701,30 @@ bool annotateMove(const string &playedMove) {
         cout << "}";
 
         // Print out the better alternative moves and their evaluations.
-        // it = evaluations.begin();
-        // Evaluation *best = *it;
-        // do {
-        //     ev = *it;
-        //     if (ev->getFirstMove() != playedMove) {
-        //         cout << "(" << ev->getFirstMove() << "{";
-        //         // if (ev->isForcedMate()) {
-        //         //     cout << "[%eval #" << ev->getNumMateMoves() << "]";
-        //         // } else {
-        //             float ev_d = ev->getValue() * 1.0 / 100;
-        //             cout << "[%eval ";
-        //             cout << std::fixed;
-        //             cout << setprecision(2) << ev_d << "]";
-        //         // }
-        //             cout << "})";
-        //     }
-        //     it++;
-        // } while (it != evaluations.end() && !worse_move(*it, best));
+        it = evaluations.begin();
+        Evaluation *best = *it;
+        do {
+            ev = *it;
+            if (ev->getFirstMove() != playedMove) {
+                cout << "(" << ev->getFirstMove() << "{";
+                if (ev->isForcedMate()) {
+                    cout << "[%eval #" << ev->getNumMateMoves() << "]";
+                } else {
+                    float ev_d = ev->getValue() * 1.0 / 100;
+                    cout << "[%eval ";
+                    cout << std::fixed;
+                    cout << setprecision(2) << ev_d << "]";
+                }
+                    cout << "})";
+            }
+            it++;
+        } while (it != evaluations.end() && !worse_move(*it, best));
         cout << endl;
         return true;
-    // } else {
-    //     cout << endl;
-    //     return false;
-    // }
+    } else {
+        cout << endl;
+        return false;
+    }
 }
 
 /* return true if move is worse than best */
@@ -893,23 +906,25 @@ void obtainEvaluations(void) {
 
     do {
         reply = engine->getResponse(eof);
-        // debug("reply: %s", reply.c_str());
-        // debug("reply size: %d", reply.size());
-        // debug("not eof? %s", !eof ? "true" : "false");
-
         tokens.clear();
-        tokenise(reply, tokens);
-        string tokenType = tokens[0];
-        if(!eof && reply.size() > 13) {
+        // std::cout << "reply.size(): " << reply.size() << std::endl;
+        if(reply.size() > 12) {
+            tokenise(reply, tokens);
+        } else {
+            continue;
+        }
+
+        // std::cout << "reply: " << reply << std::endl;
+
+        if (tokens.size() > 0) {
+            string tokenType = tokens[0];
             if (tokenType == "info") {
                 extractInfo(reply, tokens, searchDepth);
             } else if (tokenType == "bestmove") {
                 bestMoveFound = true;
             }
-        } else if (!eof && tokenType == "bestmove") {
-            bestMoveFound = true;
         }
-    } while (!bestMoveFound && !eof);
+    } while (!bestMoveFound);
 }
 
 /*
@@ -933,7 +948,7 @@ void clearEvaluations(void) {
 void tokenise(string &text, vector<string> &tokens) {
     stringstream ss(text);
     string token;
-    // printf("token: %s\n", token.c_str());
+    // std::cout << "token: " << token << std::endl;
     while (getline(ss, token, ' ')) {
         if (token != "") {
             tokens.push_back(token);

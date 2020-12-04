@@ -23,9 +23,9 @@
 #include <sstream>
 #include <string.h>
 #include <stdlib.h>
-#include "dbg.h"
 
 #include "utils.h"
+#include "dbg.h"
 
 /*
  * Handle interactions with a UCI-compatible engine.
@@ -38,8 +38,10 @@ void Engine::go(void) {
 }
 
 void Engine::setPosition(const string& moves, const string& fenstring) {
+    // assert_eq(0, fenstring.length());
     if(fenstring.length() == 0) {
-        setFENPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",moves);
+        send("position startpos moves " + moves);
+        // assert_eq("something", moves);
     }
     else {
         setFENPosition(fenstring, moves);
@@ -92,32 +94,27 @@ void Engine::searchMoves(const string& moves) {
  * Initialise the UCI engine.
  * Return true if intialised ok; false otherwise.
  */
-bool Engine::initEngine(int searchDepth,
+bool Engine::initEngine(int variations, int searchDepth,
         map<string, string>& options) {
-    // this->variations = variations;
+    this->variations = variations;
     this->searchDepth = searchDepth;
 
     send("uci");
-    // printf("hallo outside da loop");
     if(!setIdentity()) {
         cerr << "Failed to identify the engine." << endl;
         cerr << "No \"id name\" found." << endl;
         return false;
     }
     else if (waitForResponse("uciok")) {
-        // printf("hallo inside da loop");
         // Set default options.
         // setOption("UCI_AnalyseMode", "true");
-        // setOption("MultiPV", variations);
+        setOption("MultiPV", variations);
+        // setOption("UseBook", false);
 
         // Set command-line options.
         setOptions(options);
 
-        
-        // ASSERT_IS(checkIsReady() == true, "???");
         startNewGame();
-        // printf("hello there|");
-        // printf("%s", checkIsReady() ? "true\n" : "false\n");
         return checkIsReady();
     } else {
         return false;
@@ -129,18 +126,10 @@ bool Engine::initEngine(int searchDepth,
  */
 bool Engine::checkIsReady(void) {
     send("isready");
-    // printf("hallo am i hir");
 
-    // bool eof = false;
-    // string response = getResponse(eof);
-    // ASSERT_IS(response.compare("readyok") == 0, "???");
-    // ASSERT_IS(waitForResponse("readyok") == true, "???");
-    if (waitForResponse("readyok")) {
-        return true;
-    } else {
-        return false;
-    }
-    // return !eof && response.compare("readyok") == 0;
+    bool eof = false;
+    string response = getResponse(eof);
+    return !eof && response.compare("readyok") == 0;
 }
 
 void Engine::quitEngine(void) {

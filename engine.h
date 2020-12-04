@@ -58,7 +58,7 @@ public:
     bool checkIsReady(void);
     string getResponse(bool& eof);
     void go(void);
-    bool initEngine(int searchDepth,
+    bool initEngine(int variations, int searchDepth,
             map<string, string>& options);
     void quitEngine(void);
     void searchMoves(const string& moves);
@@ -94,7 +94,7 @@ private:
     // The engine's identity.
     string identity;
     // The number of variations to analyse.
-    // int variations;
+    int variations;
     // The depth to analyse.
     int searchDepth;
 

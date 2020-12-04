@@ -28,6 +28,9 @@
         __FILE__, __LINE__, ##__VA_ARGS__)
 #endif
 
+#define assert_eq(a,b) if (a != b) std::cout << "ASSERT: " << __FILE__ << ":" << __LINE__ << ": " << a << " not eq " << b << "\n"; exit
+#define assert_neq(a,b) if (a == b) std::cout << "ASSERT: " << __FILE__ << ":" << __LINE__ << ": " << a << " eq " << b << "\n"; exit
+
 
 // The clean_errno macro that’s used in the others to get a safe, readable version of errno.
 #define clean_errno() (errno == 0 ? "None" : strerror(errno))
