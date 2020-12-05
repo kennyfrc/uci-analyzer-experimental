@@ -688,24 +688,24 @@ bool annotateMove(const string &playedMove) {
         cout << "}";
 
         // Print out the better alternative moves and their evaluations.
-        // it = evaluations.begin();
-        // Evaluation *best = *it;
-        // do {
-        //     ev = *it;
-        //     if (ev->getFirstMove() != playedMove) {
-        //         cout << "(" << ev->getFirstMove() << "{";
-        //         // if (ev->isForcedMate()) {
-        //         //     cout << "[%eval #" << ev->getNumMateMoves() << "]";
-        //         // } else {
-        //             float ev_d = ev->getValue() * 1.0 / 100;
-        //             cout << "[%eval ";
-        //             cout << std::fixed;
-        //             cout << setprecision(2) << ev_d << "]";
-        //         // }
-        //             cout << "})";
-        //     }
-        //     it++;
-        // } while (it != evaluations.end() && !worse_move(*it, best));
+        it = evaluations.begin();
+        Evaluation *best = *it;
+        do {
+            ev = *it;
+            if (ev->getFirstMove() != playedMove) {
+                cout << "(" << ev->getFirstMove() << "{";
+                if (ev->isForcedMate()) {
+                    cout << "[%eval #" << ev->getNumMateMoves() << "]";
+                } else {
+                    float ev_d = ev->getValue() * 1.0 / 100;
+                    cout << "[%eval ";
+                    cout << std::fixed;
+                    cout << setprecision(2) << ev_d << "]";
+                }
+                    cout << "})";
+            }
+            it++;
+        } while (it != evaluations.end());
         cout << endl;
         return true;
     // } else {
