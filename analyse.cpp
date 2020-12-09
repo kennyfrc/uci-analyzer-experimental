@@ -27,6 +27,7 @@
 #include <vector>
 #include <errno.h>
 #include <stdlib.h>
+#include <iomanip>
 
 #include <string.h>
 #include "dbg.h"
@@ -683,7 +684,7 @@ bool annotateMove(const string &playedMove) {
             float ev_d = ev->getValue() * 1.0 / 100;
             cout << "[%eval ";
             cout << std::fixed;
-            cout << setprecision(2) << ev_d << "]";
+            cout << std::setprecision(2) << ev_d << "]";
         }
         cout << "}";
 
