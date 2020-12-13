@@ -682,7 +682,7 @@ bool annotateMove(const string &playedMove) {
         if (ev->isForcedMate()) {
             cout << "[%eval #" << ev->getNumMateMoves() << "]";
         } else {
-            float ev_d = ev->getValue() * 1.0 / 100 * 208;
+            float ev_d = ev->getValue() * 1.0 / 100;
             cout << "[%eval ";
             cout << std::fixed;
             cout << std::setprecision(2) << ev_d << "]";
