@@ -11,3 +11,5 @@ bench*
 *data
 km*
 analyse
+*.pgn
+.DS_Store

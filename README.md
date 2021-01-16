@@ -2,8 +2,6 @@
 
 This is an experimental fork of David J. Barnes' [UCI Analyzer](https://www.cs.kent.ac.uk/people/staff/djb/uci-analyser/).
 
-The limitation of the aforementioned software is that it cannot evaluate positions using non-stockfish chess engines. I have updated this by primarily removing multipv from its evaluation to accept [lc0](https://github.com/LeelaChessZero/lc0) and [rodent](https://github.com/kennyfrc/rodent-iv) evals.
-
 This project was done in the spirit as [Lichess Artist](https://github.com/kennyfrc/lichess-artist), where I will be using lichess-style annotations for [lc0 supervised learning](https://github.com/kennyfrc/trainingdata-tool).
 
 It is likely that the XML features and non-annotatePGN features are broken. So use those at your own risk.
