@@ -2,7 +2,6 @@ annotated*
 *.pb
 Kasparov*
 lc0.config
-<<<<<<< HEAD
 *.xml
 bench*
 *.xml

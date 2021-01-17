@@ -27,6 +27,8 @@
 #include <vector>
 #include <errno.h>
 #include <stdlib.h>
+#include <iomanip>
+#include <limits>
 
 #include <string.h>
 #include "dbg.h"
@@ -683,11 +685,29 @@ bool annotateMove(const string &playedMove) {
             float ev_d = ev->getValue() * 1.0 / 100;
             cout << "[%eval ";
             cout << std::fixed;
-            cout << setprecision(2) << ev_d << "]";
+            cout << std::setprecision(2) << ev_d << "]";
         }
         cout << "}";
 
         // Print out the better alternative moves and their evaluations.
+        // it = evaluations.begin();
+        // Evaluation *best = *it;
+        // do {
+        //     ev = *it;
+        //     if (ev->getFirstMove() != playedMove) {
+        //         cout << "(" << ev->getFirstMove() << "{";
+        //         if (ev->isForcedMate()) {
+        //             cout << "[%eval #" << ev->getNumMateMoves() << "]";
+        //         } else {
+        //             float ev_d = ev->getValue() * 1.0 / 100;
+        //             cout << "[%eval ";
+        //             cout << std::fixed;
+        //             cout << setprecision(2) << ev_d << "]";
+        //         }
+        //             cout << "})";
+        //     }
+        //     it++;
+        // } while (it != evaluations.end());
         it = evaluations.begin();
         Evaluation *best = *it;
         do {
@@ -700,7 +720,7 @@ bool annotateMove(const string &playedMove) {
                     float ev_d = ev->getValue() * 1.0 / 100;
                     cout << "[%eval ";
                     cout << std::fixed;
-                    cout << setprecision(2) << ev_d << "]";
+                    cout << std::setprecision(2) << ev_d << "]";
                 }
                     cout << "})";
             }
